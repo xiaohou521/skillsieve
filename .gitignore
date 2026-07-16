@@ -1,0 +1,100 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+*.pyc
+.env
+.venv/
+venv/
+env/
+
+# macOS
+.DS_Store
+
+# Internal working files (do not publish)
+internal/
+
+# Runtime logs
+*.log
+bot/bot.log
+
+# LaTeX build artifacts
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.toc
+paper/*.fls
+paper/*.fdb_latexmk
+paper/*.synctex.gz
+paper/*.bbl
+paper/*.blg
+paper/*.dvi
+paper/~*
+
+# Source/editable figure assets (keep PDFs; skip PPT source)
+paper/*.pptx
+
+# Old drafts / one-offs
+DESIGN.md
+docs/
+data/
+paper.zip
+EXPERIMENT_ENV_REQUIREMENTS.md
+OrangePi_AIpro_Configuration.md
+EXPERIMENT_LOG.md
+tools/*.html
+tools/*reviewed*
+
+# Publish only the compact benchmark index. Keep generated results, raw model
+# responses, checkpoints, and internal audits local.
+results/*
+!results/README.md
+!results/labeled_dataset_final.json
+!results/paper_metrics.json
+
+# Large dataset (3.2GB), recovered from Orange Pi
+dataset/openclaw_skills_archive_20260404/
+
+# Raw labeled packages may contain upstream credentials and mixed licenses.
+# Publish labels/aggregate results, not copied third-party package contents.
+dataset/labeled_390/
+
+# Distillation work is intentionally outside the paper/repository release.
+models/
+dataset/qwen36_tokenizer/
+experiments/distill_*.py
+experiments/prepare_distill_data.py
+experiments/train_student.py
+experiments/eval_student*.py
+experiments/teacher_label_corpus.py
+results/distill_teacher_labels/
+results/distill_train/
+results/eval_390_student*.json
+results/eval_val_student*.json
+
+# Private drafts and release working files
+paper/main_v[3-9].*
+paper/main_cn_*
+paper/*_cn.*
+paper/*audit*.md
+paper/*revision*.md
+paper/*distill*.md
+paper/*.docx
+paper/*.zip
+paper/DeKAP*.md
+paper/服务器配置*.md
+paper/模型服务*.md
+paper/gen_docx_*.py
+paper 2.zip
+DATA_LOCATIONS.md
+skill.pdf
+skill调研.md
+scripts/codex_*.py
+xun-pet-package/
+xun-pet-run/

@@ -1,0 +1,37 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "skillsieve"
+version = "0.1.0"
+description = "A hierarchical triage framework for detecting malicious AI agent skills"
+requires-python = ">=3.11"
+license = "MIT"
+dependencies = [
+    "pydantic>=2.0",
+    "click>=8.0",
+    "xgboost>=2.0",
+    "tree-sitter>=0.23",
+    "tree-sitter-python>=0.23",
+    "tree-sitter-javascript>=0.23",
+    "tree-sitter-bash>=0.23",
+    "litellm>=1.40",
+    "pyyaml>=6.0",
+    "Levenshtein>=0.25",
+    "numpy>=1.26",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+]
+server = [
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.29",
+    "httpx>=0.27",
+]
+
+[project.scripts]
+skillsieve = "skillsieve.cli:main"

@@ -1,0 +1,90 @@
+reverse_shell:
+  - 'bash\s+-i\s+>&\s+/dev/tcp'
+  - 'nc\s+-e\s+/bin/(sh|bash)'
+  - 'python.*socket.*connect'
+  - 'sh\s+-i\s+2>&1'
+  - 'mkfifo\s+/tmp/'
+
+credential_theft:
+  - 'cat\s+~/?\.(env|aws|ssh)'
+  - '\$\{?(AWS_SECRET|OPENAI_API_KEY|ANTHROPIC_API_KEY|GITHUB_TOKEN)'
+  - 'curl.*-d.*(\$HOME|~/).*\.(env|ssh)'
+  - 'cp\s+~/?\.(env|ssh|aws)'
+  - 'tar\s+.*\.(env|ssh|aws)'
+  # JS/TS: hardcoded tokens and secrets
+  - 'process\.env\[(''|")[A-Z_]*(SECRET|TOKEN|KEY|PASSWORD)'
+  - '(app_id|app_secret|encrypt_key|verification_token)\s*[:=]\s*[''"][a-zA-Z0-9]'
+  - '(LARK_APP_SECRET|FEISHU_APP_SECRET|DINGTALK_SECRET)'
+  # OAuth / credential-file exfiltration via grep+cut pipeline
+  - 'cat\s+[^\s|]*\.credentials(\.json)?'
+  - '\.credentials\.json.*grep.*(accessToken|refreshToken|token)'
+  - 'grep\s+-o\s+[''"]*"?(accessToken|apiKey|refreshToken|oauth_token)'
+  # Safety bypass flags (dual-use TTP commonly abused to run unchecked code)
+  - '--dangerously-skip-permissions'
+  - 'CLAUDE_CODE_OAUTH_TOKEN\s*='
+
+data_exfil:
+  - 'curl\s+-X?\s*POST\s+https?://'
+  - 'wget.*-q.*--post-data'
+  - 'curl.*--data.*https?://'
+  # JS/TS: fetch/axios outbound POST
+  - 'fetch\s*\(\s*[''"]https?://.*method.*POST'
+  - 'axios\.(post|put)\s*\(\s*[''"]https?://'
+  - '\.webhook\s*[:=]\s*[''"]https?://'
+  # Feishu-specific: hardcoded webhook or bot API
+  - 'open\.feishu\.cn/open-apis.*bot'
+  - 'oapi\.dingtalk\.com.*robot'
+  # Go: http.Post
+  - 'http\.Post\s*\(\s*"https?://'
+
+obfuscation:
+  - 'base64\s+(-d|--decode)'
+  - 'base64\s+-D'
+  - '[A-Za-z0-9+/]{40,}={0,2}'
+  - 'eval\s*\(\s*(atob|Buffer\.from)'
+  - '\\x[0-9a-f]{2}'
+  - 'exec\s*\(\s*compile'
+  - 'codecs\.decode'
+  # JS/TS: dynamic code execution
+  - 'new\s+Function\s*\('
+  - 'child_process.*exec\s*\('
+  - 'require\s*\(\s*[''"]child_process'
+
+social_engineering:
+  - 'download.*\.(exe|zip|dmg|pkg|msi)\b'
+  - 'extract\s+(with|using)\s+pass'
+  - 'run\s+(the\s+)?executable'
+  - 'paste\s+(it\s+)?in(to)?\s+(terminal|Terminal|shell)'
+  - 'copy\s+the\s+(command|script)\s+and\s+(run|paste|execute)'
+  - 'requires?\s+.*(openclaw-core|openclaw-agent)\s+.*(to\s+be\s+)?install'
+  - 'visit\s+\[?(this|the)\s+(link|page|url)'
+
+conditional_trigger:
+  - 'if\s+os\.environ\.get\('
+  - 'if\s+.*==\s*["\x27]root["\x27]'
+  - 'if\s+["\x27]prod["\x27]\s+in\s+'
+  - 'if\s+.*platform\.(system|node)'
+  - 'if\s+.*HOSTNAME'
+
+time_delay:
+  - 'time\.time\(\)\s*-'
+  - 'os\.path\.getmtime\('
+  - 'datetime\.now\(\)\s*-'
+  - 'timedelta\(days='
+  - '86400'
+
+prompt_injection:
+  - 'ignore\s+(previous|all|above)\s+instructions'
+  - 'override\s+safety'
+  - 'bypass\s+security'
+  - 'you\s+are\s+now\s+(DAN|jailbroken)'
+  - 'do\s+not\s+(mention|tell|inform|report)'
+  - 'silently\s+run'
+  - 'without\s+(the\s+)?user.*(know|notic|aware)'
+
+# Feishu/enterprise bot specific patterns
+feishu_suspicious:
+  - 'tenant_access_token.*hardcod'
+  - 'user_access_token\s*[:=]\s*[''"][a-zA-Z0-9]'
+  - 'open\.feishu\.cn.*im/v1.*message.*create'
+  - 'scope\.*(userInfo|userLocation|address|phone)'
